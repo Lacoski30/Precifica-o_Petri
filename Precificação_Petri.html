@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxograma Interativo de Precificação</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2, h3 {
+            color: #2c5e2e;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header svg {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+        }
+        select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #2c5e2e;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        button {
+            background-color: #2c5e2e;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #1e3e1f;
+        }
+        #fluxograma {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .node {
+            border: 2px solid #2c5e2e;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #e6f3e6;
+        }
+        .arrow {
+            text-align: center;
+            font-size: 24px;
+            color: #2c5e2e;
+        }
+        .highlight {
+            background-color: #c1e1c1;
+            font-weight: bold;
+        }
+        .hidden {
+            display: none;
+        }
+        .author-bio {
+            text-align: justify;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .author-bio h3 {
+            color: #2c5e2e;
+            margin-top: 0;
+        }
+        .author-bio ul {
+            columns: 2;
+            -webkit-columns: 2;
+            -moz-columns: 2;
+        }
+        .formula {
+            font-style: italic;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="10" width="80" height="20" rx="5" fill="#2c5e2e"/>
+            <rect x="10" y="40" width="80" height="20" rx="5" fill="#2c5e2e"/>
+            <rect x="10" y="70" width="80" height="20" rx="5" fill="#2c5e2e"/>
+            <line x1="50" y1="30" x2="50" y2="40" stroke="#2c5e2e" stroke-width="2"/>
+            <line x1="50" y1="60" x2="50" y2="70" stroke="#2c5e2e" stroke-width="2"/>
+        </svg>
+        <h1>Fluxograma Interativo de Precificação</h1>
+    </div>
+    
+    <select id="pageSelector">
+        <option value="">Selecione uma página</option>
+        <option value="precificacaoGeral">Precificação Geral</option>
+        <option value="pesquisaMercado">Pesquisa de Mercado e Tabela de Preço</option>
+        <option value="dataBase">Data Base de Projetos</option>
+        <option value="analises">Análises</option>
+        <option value="popMbpf">POP/MBPF</option>
+        <option value="pgrs">PGRS</option>
+        <option value="reagentes">Reagentes</option>
+        <option value="sobreAutor">Sobre o Autor</option>
+    </select>
+
+    <div id="fluxograma"></div>
+
+    <script>
+        const pageSelector = document.getElementById('pageSelector');
+        const fluxogramaDiv = document.getElementById('fluxograma');
+
+        pageSelector.addEventListener('change', function() {
+            const selectedPage = this.value;
+            if (selectedPage) {
+                showFluxograma(selectedPage);
+            } else {
+                fluxogramaDiv.innerHTML = '';
+            }
+        });
+
+        function showFluxograma(page) {
+            let content = '';
+            switch(page) {
+                case 'precificacaoGeral':
+                    content = `
+                        <h2>Precificação Geral</h2>
+                        <p>Esta página é utilizada para calcular o preço geral de todos os projetos da carta de serviço.</p>
+                        <div class="node">
+                            1. Preencher a coluna de Hora Membro
+                            <p class="formula">Valor base por hora de trabalho do membro da equipe</p>
+                        </div>
+                        <div class="arrow">↓</div>
+                        <div class="node">
+                            2. Preencher a coluna de Adicionais
+                            <p class="formula">Custos extras específicos do projeto (materiais, deslocamento, etc.)</p>
+                        </div>
+                        <div class="arrow">↓</div>
+                        <div class="node">
+                            3. Preencher os Multiplicadores
+                            <br>Nível 1: Fácil (1.0x)
+                            <br>Nível 2: Médio (1.5x)
+                            <br>Nível 3: Difícil (2.0x)
+                            <p class="formula">Fator que ajusta o preço base de acordo com a complexidade do projeto</p>
+                        </div>
+                        <div class="arrow">↓</div>
+                        <div class="node">
+                            4. Cálculo do Valor do Serviço
+                            <p class="formula">Valor Final = (Hora Membro * Horas Estimadas * Multiplicador) + Adicionais</p>
+                        </div>
+                        <div class="arrow">↓</div>
+                        <div class="node">
+                            <p>Esse serviço tem preço definido na tabela de preços?</p>
+                            <button onclick="showTabelaPrecos()">Sim</button>
+                            <button onclick="showServicosMenu()">Não</button>
+                        </div>
+                        <div id="servicosMenu" class="hidden">
+                            <h3>Selecione o tipo de serviço:</h3>
+                            <select id="tipoServico">
+                                <option value="">Selecione...</option>
+                                <option value="analises">Análises</option>
+                                <option value="pgrs">PGRS</option>
+                                <option value="popMbpf">MBPF/POP</option>
+                            </select>
+                            <button onclick="irParaServico()">Ir para o serviço</button>
+                        </div>
+                        <h3>Explicação dos Multiplicadores:</h3>
+                        <p>Os multiplicadores representam o nível de dificuldade do serviço e são usados para ajustar o preço final. Um serviço mais complexo terá um multiplicador maior, resultando em um preço mais alto.</p>
+                    `;
+                    break;
+                case 'pesquisaMercado':
+                    content = `
+                        <h2>Pesquisa de Mercado e Tabela de Preço</h2>
+                        <div class="node">Tabela de Preços da PETRI</div>
+                        <div class="arrow">↓</div>
+                        <div class="node">Análise de Preço da Carta de Serviço</div>
+                        <div class="arrow">↓</div>
+                        <div class="node">Links para Análises de Mercado por Tipo de Serviço</div>
+                        <p>Esta página contém informações sobre preços de serviços e análises de mercado, que são utilizadas como referência para a precificação geral.</p>
+                    `;
+                    break;
+                case 'dataBase':
+                    content = `
+                        <h2>Data Base de Projetos</h2>
+                        <p>Esta página é utilizada para:</p>
+                        <div class="node">Criação de Metodologias</div>
+                        <div class="arrow">↓</div>
+                        <div class="node">Identificação de Professores da UTF por Área de Atuação</div>
+                        <div class="arrow">↓</div>
+                        <div class="node">Listagem de Equipamentos Disponíveis na UTF</div>
+                    `;
+                    break;
+                case 'analises':
+                    content = `
+                        <h2>Análises</h2>
+                        <div class="node">
+                            1. Escolher os materiais do menu suspenso
+                            <br>(Com base na metodologia repassada por projetos)
+                            <p class="formula">Cada material tem um custo associado</p>
+                        </div>
+                        <div class="arrow">↓</div>
+                        <div class="node">
+                            2. Inserir a quantidade do Reagente
+                            <p class="formula">Quantidade * Preço Unitário do Reagente</p>
+                        </div>
+                        <div class="arrow">↓</div>
+                        <div class="node">
+                            3. Cálculo do custo total da análise
+                            <p class="formula">Custo Total = Σ(Custo de cada material) + (Tempo estimado * Valor da hora técnica)</p>
+                        </div>
+                        <p>O preço final da análise leva em conta o custo dos reagentes, o tempo estimado para realização e o valor da hora técnica do profissional.</p>
+                    `;
+                    break;
+                case 'popMbpf':
+                    content = `
+                        <h2>POP/MBPF</h2>
+                        <div class="node">
+                            1. Escolher as opções do menu suspenso
+                            <p class="formula">Cada opção tem um valor base associado</p>
+                        </div>
+                        <div class="arrow">↓</div>
+                        <div class="node">
+                            2. Cálculo do preço final
+                            <p class="formula">Preço Final = Valor Base + (Complexidade * Fator de Ajuste) + Custos Adicionais</p>
+                        </div>
+                        <p>O preço de POP/MBPF é calculado com base na complexidade do procedimento, tempo estimado de elaboração e possíveis custos adicionais específicos.</p>
+                    `;
+                    break;
+                case 'pgrs':
+                    content = `
+                        <h2>PGRS</h2>
+                        <div class="node">
+                            1. Selecionar a área ou o valor (pequeno, médio ou grande) do menu suspenso
+                            <p class="formula">Cada categoria tem um preço base associado</p>
+                        </div>
+                        <div class="arrow">↓</div>
+                        <div class="node">
+                            2. Selecionar os tipos de resíduos do estabelecimento
+                            <p class="formula">Cada tipo de resíduo adiciona um valor ao preço base</p>
+                        </div>
+                        <div class="arrow">↓</div>
+                        <div class="node">
+                            3. Cálculo do preço final
+                            <p class="formula">Preço Final = Preço Base + Σ(Valor adicional por tipo de resíduo) + Custos de Visita Técnica</p>
+                        </div>
+                        <p>O preço do PGRS é calculado considerando o tamanho do estabelecimento, a complexidade dos resíduos gerados e os custos associados à visita técnica necessária.</p>
+                    `;
+                    break;
+                case 'reagentes':
+                    content = `
+                        <h2>Reagentes</h2>
+                        <p>Esta página é utilizada para:</p>
+                        <div class="node">
+                            1. Inserir o preço do Reagente
+                            <p class="formula">Preço de compra + Custos de armazenamento e manuseio</p>
+                        </div>
+                        <div class="arrow">↓</div>
+                        <div class="node">
+                            2. Inserir a quantidade do Reagente
+                            <p class="formula">Quantidade em estoque ou necessária para análises</p>
+                        </div>
+                        <div class="arrow">↓</div>
+                        <div class="node">
+                            3. Cálculo do custo total
+                            <p class="formula">Custo Total = Preço Unitário * Quantidade</p>
+                        </div>
+                        <p class="highlight">Nota: Os preços de reagentes inseridos aqui são utilizados na página de análises para calcular os custos dos procedimentos.</p>
+                    `;
+                    break;
+                case 'sobreAutor':
+                    content = `
+                        <h2>Sobre o Autor</h2>
+                        <div class="author-bio">
+                            <h3>Rafael Lacoski Pinheiro</h3>
+                            <p>Rafael Lacoski Pinheiro, 23 anos, é um jovem profissional de 1,80m de altura que se destaca por sua personalidade multifacetada e cativante. Conhecido por sua natureza educada e gentil, Rafael é um indivíduo que deixa uma impressão duradoura em todos que o conhecem.</p>
+                            <p>Seus traços mais marcantes incluem:</p>
+                            <ul>
+                                <li>Dedicado</li>
+                                <li>Inteligente</li>
+                                <li>Criativo</li>
+                                <li>Empático</li>
+                                <li>Confiável</li>
+                                <li>Versátil</li>
+                                <li>Resiliente</li>
+                                <li>Proativo</li>
+                                <li>Comunicativo</li>
+                                <li>Organizado</li>
+                            </ul>
+                            <p>Rafael combina uma mente afiada com um coração generoso. Sua abordagem metódica para resolver problemas, aliada à sua habilidade de se conectar com as pessoas, o torna um profissional valioso em qualquer equipe. Apaixonado por aprendizado contínuo, ele está sempre em busca de novos desafios e oportunidades para crescer tanto pessoal quanto profissionalmente.</p>
+                            <p>Sua jornada é marcada por uma busca incessante pela excelência, sempre mantendo um equilíbrio entre ambição profissional e valores pessoais. Rafael Lacoski Pinheiro é, sem dúvida, um jovem promissor, cuja trajetória inspira aqueles ao seu redor a alcançarem seu pleno potencial.</p>
+                        </div>
+                    `;
+                    break;
+            }
+            fluxogramaDiv.innerHTML = content;
+        }
+
+        function showTabelaPrecos() {
+            pageSelector.value = 'pesquisaMercado';
+            showFluxograma('pesquisaMercado');
+        }
+
+        function showServicosMenu() {
+            const servicosMenu = document.getElementById('servicosMenu');
+            servicosMenu.classList.remove('hidden');
+        }
+
+        function irParaServico() {
+            const tipoServico = document.getElementById('tipoServico').value;
+            if (tipoServico) {
+                pageSelector.value = tipoServico;
+                showFluxograma(tipoServico);
+            }
+        }
+    </script>
+</body>
+</html>
